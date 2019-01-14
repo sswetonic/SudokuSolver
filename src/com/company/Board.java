@@ -4,12 +4,12 @@ import java.io.*;
 
 public class Board {
 
-    private ArrayList<ArrayList<Character>> ar = new ArrayList<ArrayList<Character>>();
+    private ArrayList<ArrayList<Character>> ar = new ArrayList<>();
 
-    public Board(File f) throws FileNotFoundException{
+    public Board(File f) throws FileNotFoundException {
         Scanner sc = new Scanner(f);
         while(sc.hasNextLine()) {
-            ArrayList<Character> row = new ArrayList<Character>();
+            ArrayList<Character> row = new ArrayList<>();
             String line1 = sc.nextLine();
             for(int i = 0; i < line1.length(); i++) {
                 row.add(line1.charAt(i));
