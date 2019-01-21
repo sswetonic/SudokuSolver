@@ -12,6 +12,7 @@ public class SsBoardReader implements BoardReader{
             ArrayList<Character> row = new ArrayList<>();
             String line1 = sc.nextLine();
             for(int i = 0; i < line1.length(); i++) {
+                //Only storing characters that are not '|' and '-'
                 if (line1.charAt(i) != 124 && line1.charAt(i) != 45) {
                     row.add(line1.charAt(i));
                 }

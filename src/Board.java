@@ -11,13 +11,13 @@ public class Board {
     }
 
     public String toString() {
-        String toReturn = "";
+        StringBuilder toReturn = new StringBuilder();
         for (List<Character> val : board) {
             for (int i = 0; i < val.size(); i++) {
-                toReturn += val.get(i) + " ";
+                toReturn.append(val.get(i) + " ");
             }
-            toReturn += "\n";
+            toReturn.append("\n");
         }
-        return toReturn;
+        return toReturn.toString();
     }
 }
