@@ -1,11 +1,10 @@
-import java.io.*;
+import java.io.FileNotFoundException;
 
 public class Main {
 
     public static void main(String[] args) throws FileNotFoundException{
-
-        File boardFile = new File("src/board.sdk");
-        Board b = new Board(boardFile);
+        String pathName = "src/board.ss";
+        Board b = new Board(pathName);
         System.out.println(b);
     }
 }

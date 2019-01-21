@@ -3,23 +3,16 @@ import java.io.*;
 
 public class Board {
 
-    private ArrayList<ArrayList<Character>> ar = new ArrayList<>();
+    private List<List<Character>> board;
 
-    public Board(File f) throws FileNotFoundException {
-        Scanner sc = new Scanner(f);
-        while (sc.hasNextLine()) {
-            ArrayList<Character> row = new ArrayList<>();
-            String line1 = sc.nextLine();
-            for(int i = 0; i < line1.length(); i++) {
-                row.add(line1.charAt(i));
-            }
-            ar.add(row);
-        }
+    public Board(String fileName) throws FileNotFoundException {
+        File boardFile = new File(fileName);
+        board = BoardReaderFactory.getReader(fileName).boardRead(boardFile);
     }
 
     public String toString() {
         String toReturn = "";
-        for (ArrayList<Character> val : ar) {
+        for (List<Character> val : board) {
             for (int i = 0; i < val.size(); i++) {
                 toReturn += val.get(i) + " ";
             }
