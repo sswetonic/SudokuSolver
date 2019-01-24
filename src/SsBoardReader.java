@@ -17,7 +17,9 @@ public class SsBoardReader implements BoardReader{
                     row.add(line1.charAt(i));
                 }
             }
-            board.add(row);
+            if(row.size() > 0) {
+                board.add(row);
+            }
         }
         return board;
     }
