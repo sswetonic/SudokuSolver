@@ -40,7 +40,7 @@ public class Board {
 
     private static boolean checkRow(List<List<Character>> board, int row) {
         for (int i = 1; i < 10; i++) {
-            if (Collections.frequency(board.get(row), Character.forDigit(i, 10)) >= 2) {
+            if (Collections.frequency(board.get(row), Character.forDigit(i, 10)) > 1) {
                 return false;
             }
         }
@@ -69,7 +69,7 @@ public class Board {
             }
         }
         for (int i = 0; i < 10; i++) {
-            if (Collections.frequency(tempList, Character.forDigit(i, 10)) >= 2) {
+            if (Collections.frequency(tempList, Character.forDigit(i, 10)) > 1) {
                 return false;
             }
         }
