@@ -6,7 +6,7 @@ public class Main {
         //board.sdk contains a fully solved, valid board
         //board2.sdk contains an invalid board;
 
-        String pathName = "src/board.sdk";
+        String pathName = "src/board2.sdk";
         Board b = new Board(pathName);
         System.out.println(b);
     }

@@ -8,6 +8,47 @@ public class Board {
     public Board(String fileName) throws FileNotFoundException {
         File boardFile = new File(fileName);
         board = BoardReaderFactory.getReader(fileName).boardRead(boardFile);
+        board = solve(board);
+
+    }
+
+    public static List<List<Character>> solve(List<List<Character>> board) {
+        return solveHelper(board);
+    }
+    //I don't know yet how to make this recursive
+    public static List<List<Character>> solveHelper(List<List<Character>> board) {
+        for (List<List<Character>> option : getNeighbors(board)) {
+            if (isSolved(option)) {
+                return option;
+            }
+        }
+        return null;
+    }
+
+    //This appears to correctly fill in a few spaces, but breaks if there are too many
+    public static List<List<List<Character>>> getNeighbors(List<List<Character>> board) {
+        List<List<List<Character>>> options = new ArrayList<>();
+        for (int i = 0; i < board.size(); i++) {
+            for (int j = 0; j <board.get(i).size(); j++) {
+                List<List<Character>> possibleBoard = new ArrayList<>(board);
+                if (board.get(i).get(j).equals('.')) {
+                    //System.out.println("blank found");
+                    for (int k = 1; k < 10 ; k++) {
+                        possibleBoard.get(i).set(j, Character.forDigit(k, 10));
+                        //System.out.println("added number: " + k);
+                        if (!(isValid(possibleBoard))) {
+                            //System.out.println("number not valid");
+                            possibleBoard.get(i).set(j, '.');
+                        } else {
+                            break;
+                        }
+                    }
+                    options.add(possibleBoard);
+                }
+            }
+
+        }
+        return options;
     }
 
     public static boolean isSolved(List<List<Character>> board) {
@@ -24,7 +65,7 @@ public class Board {
 
     public static boolean isValid(List<List<Character>> board) {
         for (int i = 0; i < 9; i++) {
-            if (!(checkRow(board, i) || checkColumn(board, i))) {
+            if (!checkRow(board, i) || !checkColumn(board, i)) {
                 return false;
             }
         }
@@ -43,6 +84,15 @@ public class Board {
             if (Collections.frequency(board.get(row), Character.forDigit(i, 10)) > 1) {
                 return false;
             }
+            /*
+            for (int j = 0; j < 9; j++) {
+                if (!board.get(i-1).get(j).equals('.')) {
+                    return false;
+                } else if (!Character.isDigit(board.get(i-1).get(j))) {
+                    return false;
+                }
+            }
+            */
         }
         return true;
     }
