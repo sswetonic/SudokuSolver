@@ -27,6 +27,7 @@ public class Board {
     }
 
     //This appears to correctly fill in a few spaces, but breaks if there are too many
+    //I chose to pass board as a parameter so the function gets access to modify it
     public static List<List<List<Character>>> getNeighbors(List<List<Character>> board) {
         List<List<List<Character>>> options = new ArrayList<>();
         for (int i = 0; i < board.size(); i++) {
