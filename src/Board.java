@@ -15,7 +15,8 @@ public class Board {
     public static List<List<Character>> solve(List<List<Character>> board) {
         return solveHelper(board);
     }
-    //I don't know yet how to make this recursive
+
+    //I know this doesn't work but I think I got 75% of the way there
     public static List<List<Character>> solveHelper(List<List<Character>> board) {
         for (List<List<Character>> option : getNeighbors(board)) {
             if (isSolved(option)) {
@@ -32,12 +33,10 @@ public class Board {
             for (int j = 0; j <board.get(i).size(); j++) {
                 List<List<Character>> possibleBoard = new ArrayList<>(board);
                 if (board.get(i).get(j).equals('.')) {
-                    //System.out.println("blank found");
                     for (int k = 1; k < 10 ; k++) {
                         possibleBoard.get(i).set(j, Character.forDigit(k, 10));
-                        //System.out.println("added number: " + k);
+                        //Loops 1-9, if the number added doesn't work, it undos the change
                         if (!(isValid(possibleBoard))) {
-                            //System.out.println("number not valid");
                             possibleBoard.get(i).set(j, '.');
                         } else {
                             break;
