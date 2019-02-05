@@ -32,18 +32,22 @@ public class Board {
         List<List<List<Character>>> options = new ArrayList<>();
         for (int i = 0; i < board.size(); i++) {
             for (int j = 0; j <board.get(i).size(); j++) {
-                List<List<Character>> possibleBoard = new ArrayList<>(board);
+                List<List<Character>> possibleBoard = new ArrayList<>();
+                for (int row = 0; row < board.size(); row++) {
+                    possibleBoard.add(new ArrayList<>());
+                    for (int col = 0; col < board.get(row).size(); col++) {
+                        possibleBoard.get(row).add(board.get(row).get(col));
+                    }
+                }
                 if (board.get(i).get(j).equals('.')) {
                     for (int k = 1; k < 10 ; k++) {
                         possibleBoard.get(i).set(j, Character.forDigit(k, 10));
                         //Loops 1-9, if the number added doesn't work, it undos the change
-                        if (!(isValid(possibleBoard))) {
-                            possibleBoard.get(i).set(j, '.');
-                        } else {
-                            break;
+                        if (isValid(possibleBoard)) {
+                            options.add(possibleBoard);
                         }
                     }
-                    options.add(possibleBoard);
+
                 }
             }
 
