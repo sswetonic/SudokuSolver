@@ -1,140 +1,152 @@
-import java.util.*;
-import java.io.*;
+//package board;
+
+import board.reader.BoardReader;
+import board.reader.BoardReaderFactory;
+import jdk.jshell.spi.ExecutionControl;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 
 public class Board {
+    private final List<List<Integer>> board;
 
-    public List<List<Character>> board;
-
-    public Board(String fileName) throws FileNotFoundException {
-        File boardFile = new File(fileName);
-        board = BoardReaderFactory.getReader(fileName).boardRead(boardFile);
-        board = solve(board);
-
+    public Board() {
+        this.board = new ArrayList<>();
     }
 
-    public static List<List<Character>> solve(List<List<Character>> board) {
-        return solveHelper(board);
+    public Board(String filePath) throws IOException, ExecutionControl.NotImplementedException {
+        BoardReader reader = BoardReaderFactory.getReader(filePath);
+        this.board = reader.parseBoard(filePath);
     }
 
-    //I know this doesn't work but I think I got 75% of the way there
-    public static List<List<Character>> solveHelper(List<List<Character>> board) {
-        for (List<List<Character>> option : getNeighbors(board)) {
-            if (isSolved(option)) {
-                return option;
-            }
-        }
-        return null;
-    }
+    Board(List<List<Integer>> board) {
+        this.board = new ArrayList<>();
 
-    //This appears to correctly fill in a few spaces, but breaks if there are too many
-    //I chose to pass board as a parameter so the function gets access to modify it
-    public static List<List<List<Character>>> getNeighbors(List<List<Character>> board) {
-        List<List<List<Character>>> options = new ArrayList<>();
         for (int i = 0; i < board.size(); i++) {
-            for (int j = 0; j <board.get(i).size(); j++) {
-                List<List<Character>> possibleBoard = new ArrayList<>(board);
-                if (board.get(i).get(j).equals('.')) {
-                    for (int k = 1; k < 10 ; k++) {
-                        possibleBoard.get(i).set(j, Character.forDigit(k, 10));
-                        //Loops 1-9, if the number added doesn't work, it undos the change
-                        if (!(isValid(possibleBoard))) {
-                            possibleBoard.get(i).set(j, '.');
-                        } else {
-                            break;
-                        }
-                    }
-                    options.add(possibleBoard);
-                }
+            this.board.add(new ArrayList<>());
+            for (int j = 0; j < board.get(i).size(); j++) {
+                this.board.get(i).add(board.get(i).get(j));
             }
-
         }
-        return options;
     }
 
-    public static boolean isSolved(List<List<Character>> board) {
-        for (int i = 0; i < 9; i++) {
-            if (Collections.frequency(board.get(i), '.') > 0) {
-                return false;
-            }
-        }
-        if (!isValid(board)) {
-            return false;
-        }
-        return true;
-    }
-
-    public static boolean isValid(List<List<Character>> board) {
-        for (int i = 0; i < 9; i++) {
-            if (!checkRow(board, i) || !checkColumn(board, i)) {
-                return false;
-            }
-        }
-        for (int i = 0; i < 9; i += 3) {
-            for (int j = 0; j < 9; j += 3) {
-                if (!(checkSquare(board, i, j))) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
-    private static boolean checkRow(List<List<Character>> board, int row) {
-        for (int i = 1; i < 10; i++) {
-            if (Collections.frequency(board.get(row), Character.forDigit(i, 10)) > 1) {
-                return false;
-            }
-            /*
-            for (int j = 0; j < 9; j++) {
-                if (!board.get(i-1).get(j).equals('.')) {
-                    return false;
-                } else if (!Character.isDigit(board.get(i-1).get(j))) {
-                    return false;
-                }
-            }
-            */
-        }
-        return true;
-    }
-
-    private static boolean checkColumn(List<List<Character>> board, int col) {
-        List<Character> tempList = new ArrayList<>();
-        for (int i = 0; i < 9; i++) {
-            tempList.add(board.get(i).get(col));
-        }
-        for (int i = 1; i < 10; i++) {
-            if (Collections.frequency(tempList, Character.forDigit(i, 10)) > 1) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private static boolean checkSquare(List<List<Character>> board, int row, int col) {
-        List<Character> tempList = new ArrayList<>();
-
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
-                tempList.add(board.get(row + i).get(col + j));
-            }
-        }
-        for (int i = 0; i < 10; i++) {
-            if (Collections.frequency(tempList, Character.forDigit(i, 10)) > 1) {
-                return false;
-            }
-        }
-
-        return true;
+    List<List<Integer>> getBoard() {
+        return board;
     }
 
     public String toString() {
-        StringBuilder toReturn = new StringBuilder();
-        for (List<Character> val : board) {
-            for (int i = 0; i < val.size(); i++) {
-                toReturn.append(val.get(i) + " ");
+        StringBuilder boardString = new StringBuilder();
+        for (List<Integer> row : this.board) {
+            StringBuilder rowString = new StringBuilder();
+            for (Integer item : row) {
+                if (item == null) {
+                    rowString.append('.');
+                } else {
+                    rowString.append(item.toString());
+                }
             }
-            toReturn.append("\n");
+
+            boardString.append(rowString);
+            boardString.append("\n");
         }
-        return toReturn.toString();
+
+        return boardString.toString();
+    }
+
+    private void setCell(Integer row, Integer column, Integer value) {
+        this.board.get(row).set(column, value);
+    }
+
+    public ArrayList<Board> getNeighbors() {
+        ArrayList<Board> neighbors = new ArrayList<>();
+
+        for (int i = 0; i < this.getBoard().size(); i++) {
+            for (int j = 0; j < this.getBoard().get(i).size(); j++) {
+                if (this.getBoard().get(i).get(j) == null) {
+                    for (int k = 1; k <= 9; k++) {
+                        Board neighbor = new Board(this.getBoard());
+                        neighbor.setCell(i, j, k);
+
+                        if (neighbor.isValid()) {
+                            neighbors.add(neighbor);
+                        }
+                    }
+                }
+            }
+        }
+
+        return neighbors;
+    }
+
+    private int getNumBlanks() {
+        int blanks = 0;
+        for (List<Integer> row : this.board) {
+            for (Integer cell : row) {
+                if (cell == null) {
+                    blanks++;
+                }
+            }
+        }
+
+        return blanks;
+    }
+
+    boolean isValid() {
+        HashSet<Integer> rowConstraint = new HashSet<>();
+        HashSet<Integer> colConstraint = new HashSet<>();
+        HashSet<Integer> gridConstraint = new HashSet<>();
+
+        // Row and Column Constraints
+        for (int i = 0; i < this.board.size(); i++) {
+            for (int j = 0; j < this.board.get(i).size(); j++) {
+                Integer value = this.board.get(i).get(j);
+                if (rowConstraint.contains(value)) {
+                    return false;
+                }
+
+                if (value != null) {
+                    rowConstraint.add(value);
+                }
+
+                value = this.board.get(j).get(i);
+                if (colConstraint.contains(value)) {
+                    return false;
+                }
+
+                if (value != null) {
+                    colConstraint.add(value);
+                }
+            }
+
+            rowConstraint.clear();
+            colConstraint.clear();
+        }
+
+        // Grid Constraint
+        for (int i = 0; i < this.board.size(); i = i + 3) {
+            for (int j = 0; j < this.board.get(i).size(); j = j + 3) {
+                for (int k = 0; k < 3; k++) {
+                    for (int l = 0; l < 3; l++) {
+                        Integer value = this.board.get(i + k).get(j + l);
+                        if (gridConstraint.contains(value)) {
+                            return false;
+                        }
+                        if (value != null) {
+                            gridConstraint.add(value);
+                        }
+                    }
+                }
+                gridConstraint.clear();
+            }
+
+        }
+
+        return true;
+    }
+
+    public boolean isSolved() {
+        return isValid() && getNumBlanks() == 0;
     }
 }
