@@ -1,8 +1,7 @@
-package board.reader;
-
-import java.io.IOException;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.List;
 
 public interface BoardReader {
-    List<List<Integer>> parseBoard(String filePath) throws IOException;
+    List<List<Character>> boardRead(File fileName) throws FileNotFoundException;
 }

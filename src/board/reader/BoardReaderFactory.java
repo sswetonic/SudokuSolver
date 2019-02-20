@@ -1,22 +1,10 @@
-package board.reader;
-
-
-import jdk.jshell.spi.ExecutionControl;
-
 public class BoardReaderFactory {
-    public static BoardReader getReader(String filePath) throws ExecutionControl.NotImplementedException {
-        int i = filePath.lastIndexOf('.');
-        if (i > 0) {
-            String extension = filePath.substring(i + 1);
-            if (extension.equalsIgnoreCase("sdk")) {
-                return new SdkBoardReader();
-
-            } else if (extension.equalsIgnoreCase("ss")) {
-                return new SsBoardReader();
-            }
-            throw new ExecutionControl.NotImplementedException("File format " + extension + " is not supported.");
+    public static BoardReader getReader(String fileName) {
+        String extension = fileName.substring(fileName.indexOf('.'));
+        if (extension.equals(".ss")) {
+            return new SsBoardReader();
+        } else {
+            return new SdkBoardReader();
         }
-
-        throw new UnsupportedOperationException("File has no extension.");
     }
 }

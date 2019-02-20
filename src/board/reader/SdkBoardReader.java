@@ -1,22 +1,21 @@
-package board.reader;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Scanner;
 
 public class SdkBoardReader implements BoardReader {
-    public List<List<Integer>> parseBoard(String filePath) throws IOException {
-        Path path = Paths.get(filePath);
-
-        return Files.lines(path).map(s -> s.chars().mapToObj(value -> {
-            if (value == '.') {
-                return null;
-            } else {
-                return Character.getNumericValue(value);
+    public List<List<Character>> boardRead(File fileName) throws FileNotFoundException {
+        List<List<Character>> board = new ArrayList<>();
+        Scanner sc = new Scanner(fileName);
+        while (sc.hasNextLine()) {
+            ArrayList<Character> row = new ArrayList<>();
+            String line1 = sc.nextLine();
+            for(int i = 0; i < line1.length(); i++) {
+                row.add(line1.charAt(i));
             }
-        }).collect(Collectors.toList())).collect(Collectors.toList());
+            board.add(row);
+        }
+        return board;
     }
 }
