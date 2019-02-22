@@ -3,71 +3,92 @@ import java.io.*;
 
 public class Board {
 
-    public List<List<Character>> board;
+    private final List<List<Character>> board;
 
     public Board(String fileName) throws FileNotFoundException {
         File boardFile = new File(fileName);
         board = BoardReaderFactory.getReader(fileName).boardRead(boardFile);
-        board = solve(board);
 
     }
 
-    public static List<List<Character>> solve(List<List<Character>> board) {
-        return solveHelper(board);
-    }
+    Board(List<List<Character>> board) {
+        this.board = new ArrayList<>();
 
-    //I know this doesn't work but I think I got 75% of the way there
-    public static List<List<Character>> solveHelper(List<List<Character>> board) {
-        for (List<List<Character>> option : getNeighbors(board)) {
-            if (isSolved(option)) {
-                return option;
+        for (int i = 0; i < board.size(); i++) {
+            this.board.add(new ArrayList<>());
+            for (int j = 0; j < board.get(i).size(); j++) {
+                this.board.get(i).add(board.get(i).get(j));
             }
         }
-        return null;
     }
 
     //This appears to correctly fill in a few spaces, but breaks if there are too many
     //I chose to pass board as a parameter so the function gets access to modify it
-    public static List<List<List<Character>>> getNeighbors(List<List<Character>> board) {
+    /*public static List<List<List<Character>>> getNeighbors(List<List<Character>> board) {
         List<List<List<Character>>> options = new ArrayList<>();
         for (int i = 0; i < board.size(); i++) {
             for (int j = 0; j <board.get(i).size(); j++) {
-                List<List<Character>> possibleBoard = new ArrayList<>();
-                for (int row = 0; row < board.size(); row++) {
-                    possibleBoard.add(new ArrayList<>());
-                    for (int col = 0; col < board.get(row).size(); col++) {
-                        possibleBoard.get(row).add(board.get(row).get(col));
-                    }
-                }
+                List<List<Character>> possibleBoard = new ArrayList<>(board);
                 if (board.get(i).get(j).equals('.')) {
                     for (int k = 1; k < 10 ; k++) {
                         possibleBoard.get(i).set(j, Character.forDigit(k, 10));
                         //Loops 1-9, if the number added doesn't work, it undos the change
-                        if (isValid(possibleBoard)) {
-                            options.add(possibleBoard);
+                        if (!(isValid(possibleBoard))) {
+                            possibleBoard.get(i).set(j, '.');
+                        } else {
+                            break;
                         }
                     }
-
+                    options.add(possibleBoard);
                 }
             }
 
         }
         return options;
     }
+    */
 
-    public static boolean isSolved(List<List<Character>> board) {
+    public ArrayList<Board> getNeighbors() {
+        ArrayList<Board> neighbors = new ArrayList<>();
+        for (int i = 0; i < this.getBoard().size(); i++) {
+            for (int j = 0; j < this.getBoard().get(i).size(); j++) {
+                if (this.getBoard().get(i).get(j) == '.') {
+                    for (int k = 1; k <= 9; k++) {
+                        Board neighbor = new Board(this.board);
+                        neighbor.setCell(i, j, Character.forDigit(k, 10));
+
+                        if (neighbor.isValid()) {
+                            neighbors.add(neighbor);
+                        }
+                    }
+                }
+            }
+        }
+        return neighbors;
+    }
+
+    List<List<Character>> getBoard() {
+        return board;
+    }
+
+    private void setCell(Integer row, Integer column, Character value) {
+        this.board.get(row).set(column, value);
+    }
+
+
+    /*boolean isSolved() {
         for (int i = 0; i < 9; i++) {
             if (Collections.frequency(board.get(i), '.') > 0) {
                 return false;
             }
         }
-        if (!isValid(board)) {
+        if (!isValid()) {
             return false;
         }
         return true;
     }
-
-    public static boolean isValid(List<List<Character>> board) {
+    */
+    boolean isValid() {
         for (int i = 0; i < 9; i++) {
             if (!checkRow(board, i) || !checkColumn(board, i)) {
                 return false;
@@ -88,15 +109,7 @@ public class Board {
             if (Collections.frequency(board.get(row), Character.forDigit(i, 10)) > 1) {
                 return false;
             }
-            /*
-            for (int j = 0; j < 9; j++) {
-                if (!board.get(i-1).get(j).equals('.')) {
-                    return false;
-                } else if (!Character.isDigit(board.get(i-1).get(j))) {
-                    return false;
-                }
-            }
-            */
+
         }
         return true;
     }
@@ -129,6 +142,76 @@ public class Board {
         }
 
         return true;
+    }
+
+    private int getNumBlanks() {
+        int blanks = 0;
+        for (List<Character> row : this.board) {
+            for (Character cell : row) {
+                if (cell == '.') {
+                    blanks++;
+                }
+            }
+        }
+        return blanks;
+    }
+    /*
+    boolean isValid() {
+        HashSet<Character> rowConstraint = new HashSet<>();
+        HashSet<Character> colConstraint = new HashSet<>();
+        HashSet<Character> gridConstraint = new HashSet<>();
+
+        // Row and Column Constraints
+        for (int i = 0; i < this.board.size(); i++) {
+            for (int j = 0; j < this.board.get(i).size(); j++) {
+                Character value = this.board.get(i).get(j);
+                if (rowConstraint.contains(value)) {
+                    return false;
+                }
+
+                if (value != '.') {
+                    rowConstraint.add(value);
+                }
+
+                value = this.board.get(j).get(i);
+                if (colConstraint.contains(value)) {
+                    return false;
+                }
+
+                if (value != '.') {
+                    colConstraint.add(value);
+                }
+            }
+
+            rowConstraint.clear();
+            colConstraint.clear();
+        }
+
+        // Grid Constraint
+        for (int i = 0; i < this.board.size(); i = i + 3) {
+            for (int j = 0; j < this.board.get(i).size(); j = j + 3) {
+                for (int k = 0; k < 3; k++) {
+                    for (int l = 0; l < 3; l++) {
+                        Character value = this.board.get(i + k).get(j + l);
+                        if (gridConstraint.contains(value)) {
+                            return false;
+                        }
+                        if (value != '.') {
+                            gridConstraint.add(value);
+                        }
+                    }
+                }
+                gridConstraint.clear();
+            }
+
+        }
+
+        return true;
+    }
+    */
+
+    public boolean isSolved() {
+        return isValid() && getNumBlanks() == 0;
     }
 
     public String toString() {
