@@ -21,8 +21,7 @@ public class RecursiveSolver extends SudokuSolver{
         return null;
     }
 
-
     public Board solve() {
-        return solve(this.board);
+        return solve(this.getBoard());
     }
 }

@@ -2,18 +2,25 @@ import java.io.IOException;
 
 public class Main {
     public static void main(String [] args) throws IOException {
-        RecursiveSolver solver1 = new RecursiveSolver("src/board2.sdk");
-        //SudokuSolver solver2 = new DFSSolver("src/board2.sdk");
+        RecursiveSolver solver1 = new RecursiveSolver("src/board.sdk");
+        SudokuSolver solver2 = new DFSSolver("src/board.sdk");
 
-        System.out.println(solver1.board);
+        long t1 = System.nanoTime();
+        System.out.println(solver2.solve());
+        long t2 = System.nanoTime();
+        System.out.println("Time: " + (t2 - t1));
+
+        t1 = System.nanoTime();
         System.out.println(solver1.solve());
-
+        t2 = System.nanoTime();
+        System.out.println("Time: " + (t2 - t1));
     }
     /*
-    I actually had my recursive solution working until I tried to split it up into an abstract class with
-    two implementations. It appears to be a problem with calling the super() constructor; I kept getting an error
-    saying "there is no default constructor in SudokuSolver" and adding super() made that go away. Since I don't have a
-    this working in its current state, I can't analyze the runtime of the solutions. I'll continue trying to get this
-    working.
+    The iterative solution takes significantly more time regardless of whether or not it runs first or second.
+    It took 106889363 ns while the recursive solution took 2072025 ns. I had to prune down the puzzle to just a few
+    missing numbers because it was taking too long the first time I ran the program. I don't have any idea why this
+    is happening, because my initial guess was that the recursive solution would take longer. Maybe recursion is
+    faster because, in the process of making recursive calls, work is suspended on other functions calls but the
+    iterative solution does every operation until a solution is found.
      */
 }

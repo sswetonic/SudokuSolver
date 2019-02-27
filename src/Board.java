@@ -22,32 +22,6 @@ public class Board {
         }
     }
 
-    //This appears to correctly fill in a few spaces, but breaks if there are too many
-    //I chose to pass board as a parameter so the function gets access to modify it
-    /*public static List<List<List<Character>>> getNeighbors(List<List<Character>> board) {
-        List<List<List<Character>>> options = new ArrayList<>();
-        for (int i = 0; i < board.size(); i++) {
-            for (int j = 0; j <board.get(i).size(); j++) {
-                List<List<Character>> possibleBoard = new ArrayList<>(board);
-                if (board.get(i).get(j).equals('.')) {
-                    for (int k = 1; k < 10 ; k++) {
-                        possibleBoard.get(i).set(j, Character.forDigit(k, 10));
-                        //Loops 1-9, if the number added doesn't work, it undos the change
-                        if (!(isValid(possibleBoard))) {
-                            possibleBoard.get(i).set(j, '.');
-                        } else {
-                            break;
-                        }
-                    }
-                    options.add(possibleBoard);
-                }
-            }
-
-        }
-        return options;
-    }
-    */
-
     public ArrayList<Board> getNeighbors() {
         ArrayList<Board> neighbors = new ArrayList<>();
         for (int i = 0; i < this.getBoard().size(); i++) {
@@ -75,19 +49,6 @@ public class Board {
         this.board.get(row).set(column, value);
     }
 
-
-    /*boolean isSolved() {
-        for (int i = 0; i < 9; i++) {
-            if (Collections.frequency(board.get(i), '.') > 0) {
-                return false;
-            }
-        }
-        if (!isValid()) {
-            return false;
-        }
-        return true;
-    }
-    */
     boolean isValid() {
         for (int i = 0; i < 9; i++) {
             if (!checkRow(board, i) || !checkColumn(board, i)) {
@@ -155,60 +116,6 @@ public class Board {
         }
         return blanks;
     }
-    /*
-    boolean isValid() {
-        HashSet<Character> rowConstraint = new HashSet<>();
-        HashSet<Character> colConstraint = new HashSet<>();
-        HashSet<Character> gridConstraint = new HashSet<>();
-
-        // Row and Column Constraints
-        for (int i = 0; i < this.board.size(); i++) {
-            for (int j = 0; j < this.board.get(i).size(); j++) {
-                Character value = this.board.get(i).get(j);
-                if (rowConstraint.contains(value)) {
-                    return false;
-                }
-
-                if (value != '.') {
-                    rowConstraint.add(value);
-                }
-
-                value = this.board.get(j).get(i);
-                if (colConstraint.contains(value)) {
-                    return false;
-                }
-
-                if (value != '.') {
-                    colConstraint.add(value);
-                }
-            }
-
-            rowConstraint.clear();
-            colConstraint.clear();
-        }
-
-        // Grid Constraint
-        for (int i = 0; i < this.board.size(); i = i + 3) {
-            for (int j = 0; j < this.board.get(i).size(); j = j + 3) {
-                for (int k = 0; k < 3; k++) {
-                    for (int l = 0; l < 3; l++) {
-                        Character value = this.board.get(i + k).get(j + l);
-                        if (gridConstraint.contains(value)) {
-                            return false;
-                        }
-                        if (value != '.') {
-                            gridConstraint.add(value);
-                        }
-                    }
-                }
-                gridConstraint.clear();
-            }
-
-        }
-
-        return true;
-    }
-    */
 
     public boolean isSolved() {
         return isValid() && getNumBlanks() == 0;
